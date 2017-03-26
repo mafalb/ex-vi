@@ -14,7 +14,7 @@ BuildRequires:  ncurses-devel
 The Traditional Vi
 
 %prep
-%setup -q -n ex-050325
+%setup -q
 #%patch0 -p1
 
 %build
