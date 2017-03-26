@@ -4,7 +4,7 @@ Release:        1%{?dist}
 Summary:        The Traditional Vi
 License:        BSD with attribution
 Source0:        http://prdownloads.sourceforge.net/ex-vi/ex-050325.tar.bz2
-Patch0:         ex-vi-Makefile.patch
+#Patch0:         ex-vi-Makefile.patch
 Packager:       Markus Falb <rpm@mafalb.at>
 
 Requires:       ncurses
@@ -15,7 +15,7 @@ The Traditional Vi
 
 %prep
 %setup -q -n ex-050325
-%patch0 -p1
+#%patch0 -p1
 
 %build
 %__make
