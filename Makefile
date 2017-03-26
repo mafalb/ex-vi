@@ -79,7 +79,7 @@
 # Destinations for installation. $(PRESERVEDIR) is used for recovery files.
 # It will get mode 1777.
 #
-PREFIX		= /usr/local
+PREFIX		= /usr
 BINDIR		= $(PREFIX)/bin
 LIBEXECDIR	= $(PREFIX)/libexec
 MANDIR		= $(PREFIX)/share/man
@@ -89,12 +89,12 @@ PRESERVEDIR	= /var/preserve
 # DESTDIR is prepended to the installation paths. It is mostly useful
 # for package building and should be left empty otherwise.
 #
-DESTDIR		=
+#DESTDIR		=
 
 #
 # A BSD-like install program. GNU install will fit well here, too.
 #
-INSTALL		= /usr/ucb/install
+INSTALL		= /usr/bin/install
 
 #
 # Compiler and linker flags.
@@ -190,7 +190,7 @@ OSTYPE	= -DVMUNIX
 # raises this limit to around 1 GB, but ex will consume much more of core
 # and temp file space then.
 #
-#LARGEF	= -DLARGEF
+LARGEF	= -DLARGEF
 
 # 
 # The next setting is a crucial one since it determines the way ex
@@ -205,13 +205,13 @@ OSTYPE	= -DVMUNIX
 #
 # You may also get terminfo access by using the ncurses library.
 #
-#TERMLIB	= ncurses
+TERMLIB	= ncurses
 #
 # The preferred choice for ex on Linux distributions, other systems that
 # provide a good termcap file, or when setting the TERMCAP environment
 # variable is deemed sufficient, is the included 2.11BSD termcap library.
 #
-TERMLIB	= termlib
+#TERMLIB	= termlib
 
 #
 # Since ex uses sbrk() internally, a conflict with the libc's version of
@@ -264,8 +264,8 @@ SRC7	= mapmalloc.c malloc.c
 all: $(RETGT) exrecover expreserve ex
 
 ex: $(TLIB) $(OBJS)
-	$(CC) -o ex $(LDFLAGS) $(OBJS) $(LDADD) -Llibterm -l$(TERMLIB) $(RELIB)
-	size ex
+	$(CC) -o ex.ex-vi $(LDFLAGS) $(OBJS) $(LDADD) -Llibterm -l$(TERMLIB) $(RELIB)
+	size ex.ex-vi
 
 $(TLIB): libterm/termcap.c libterm/tgoto.c libterm/tputs.c libterm/libterm.h
 	@cd libterm && $(MAKE) CC="$(CC)" \
@@ -288,7 +288,7 @@ clean:
 	@cd libterm && $(MAKE) clean
 	@test ! -d libuxre || (cd libuxre && $(MAKE) clean)
 #	If we dont have ex we cant make it so don't rm ex_vars.h
-	-rm -f ex exrecover expreserve *.o x*.[cs] core errs trace
+	-rm -f ex.ex-vi exrecover expreserve *.o x*.[cs] core errs trace
 
 mrproper: clean
 	-rm -f log
@@ -299,37 +299,37 @@ install-man:
 	test -d $(DESTDIR)$(PREFIX) || mkdir -p $(DESTDIR)$(PREFIX)
 	test -d $(DESTDIR)$(MANDIR) || mkdir -p $(DESTDIR)$(MANDIR)
 	test -d $(DESTDIR)$(MANDIR)/man1 || mkdir -p $(DESTDIR)$(MANDIR)/man1
-	rm -f $(DESTDIR)$(MANDIR)/man1/ex.1 $(DESTDIR)$(MANDIR)/man1/edit.1 \
-		$(DESTDIR)$(MANDIR)/man1/vedit.1 \
-		$(DESTDIR)$(MANDIR)/man1/vi.1 \
-		$(DESTDIR)$(MANDIR)/man1/view.1
-	$(INSTALL) -c -m 644 ex.1 $(DESTDIR)$(MANDIR)/man1/ex.1
-	$(INSTALL) -c -m 644 vi.1 $(DESTDIR)$(MANDIR)/man1/vi.1
-	ln -s ex.1 $(DESTDIR)$(MANDIR)/man1/edit.1
-	ln -s vi.1 $(DESTDIR)$(MANDIR)/man1/vedit.1
-	ln -s vi.1 $(DESTDIR)$(MANDIR)/man1/view.1
+	rm -f $(DESTDIR)$(MANDIR)/man1/ex.1 $(DESTDIR)$(MANDIR)/man1/edit.ex-vi.1 \
+		$(DESTDIR)$(MANDIR)/man1/vedit.ex-vi.1 \
+		$(DESTDIR)$(MANDIR)/man1/vi.ex-vi.1 \
+		$(DESTDIR)$(MANDIR)/man1/view.ex-vi.1
+	$(INSTALL) -c -m 644 ex.1 $(DESTDIR)$(MANDIR)/man1/ex.ex-vi.1
+	$(INSTALL) -c -m 644 vi.1 $(DESTDIR)$(MANDIR)/man1/vi.ex-vi.1
+	ln -s ex.1 $(DESTDIR)$(MANDIR)/man1/edit.ex-vi.1
+	ln -s vi.1 $(DESTDIR)$(MANDIR)/man1/vedit.ex-vi.1
+	ln -s vi.1 $(DESTDIR)$(MANDIR)/man1/view.ex-vi.1
 
 install: all install-man
-	rm -f $(DESTDIR)$(BINDIR)/ex $(DESTDIR)$(BINDIR)/edit \
-		$(DESTDIR)$(BINDIR)/vedit $(DESTDIR)$(BINDIR)/vi \
-		$(DESTDIR)$(BINDIR)/view
+	rm -f $(DESTDIR)$(BINDIR)/ex.ex-vi $(DESTDIR)$(BINDIR)/edit.ex-vi \
+		$(DESTDIR)$(BINDIR)/vedit.ex-vi $(DESTDIR)$(BINDIR)/vi.ex-vi \
+		$(DESTDIR)$(BINDIR)/view.ex-vi
 	test -d $(DESTDIR)$(BINDIR) || mkdir -p $(DESTDIR)$(BINDIR)
 # special provisions for sticky install
-	if test -f $(DESTDIR)$(BINDIR)/ex; \
+	if test -f $(DESTDIR)$(BINDIR)/ex.ex-vi; \
 	then	test -f $(DESTDIR)$(BINDIR)/ex.old.$$$$ && exit 1; \
-		chmod 755 $(DESTDIR)$(BINDIR)/ex; \
-		echo q | $(DESTDIR)$(BINDIR)/ex; \
-		mv $(DESTDIR)$(BINDIR)/ex $(DESTDIR)$(BINDIR)/ex.old.$$$$; \
+		chmod 755 $(DESTDIR)$(BINDIR)/ex.ex-vi; \
+		echo q | $(DESTDIR)$(BINDIR)/ex.ex-vi; \
+		mv $(DESTDIR)$(BINDIR)/ex.ex-vi $(DESTDIR)$(BINDIR)/ex.old.$$$$; \
 		rm -f $(DESTDIR)$(BINDIR)/ex.old.$$$$; \
 	fi
-	$(INSTALL) -c $(STRIP) -m 1755 ex $(DESTDIR)$(BINDIR)/ex
+	$(INSTALL) -c $(STRIP) -m 1755 ex.ex-vi $(DESTDIR)$(BINDIR)/ex.ex-vi
 	test -d $(DESTDIR)$(LIBEXECDIR) || mkdir -p $(DESTDIR)$(LIBEXECDIR)
 	$(INSTALL) -c $(STRIP) exrecover $(DESTDIR)$(LIBEXECDIR)/exrecover
 	$(INSTALL) -c $(STRIP) expreserve $(DESTDIR)$(LIBEXECDIR)/expreserve
-	ln -s ex $(DESTDIR)$(BINDIR)/edit
-	ln -s ex $(DESTDIR)$(BINDIR)/vedit
-	ln -s ex $(DESTDIR)$(BINDIR)/vi
-	ln -s ex $(DESTDIR)$(BINDIR)/view
+	ln -s ex.ex-vi $(DESTDIR)$(BINDIR)/edit.ex-vi
+	ln -s ex.ex-vi $(DESTDIR)$(BINDIR)/vedit.ex-vi
+	ln -s ex.ex-vi $(DESTDIR)$(BINDIR)/vi.ex-vi
+	ln -s ex.ex-vi $(DESTDIR)$(BINDIR)/view.ex-vi
 	test -d $(DESTDIR)$(PRESERVEDIR) || mkdir -p $(DESTDIR)$(PRESERVEDIR)
 	chmod 1777 $(DESTDIR)$(PRESERVEDIR)
 
