@@ -1,5 +1,5 @@
 Name:           ex-vi          
-Version:        0.0
+Version:        050325
 Release:        1%{?dist}
 Summary:        The Traditional Vi
 License:        BSD with attribution
